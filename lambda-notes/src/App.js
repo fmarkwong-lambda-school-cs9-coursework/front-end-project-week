@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Link } from "react-router-dom";
 
 import { Button } from 'reactstrap';
 
@@ -21,7 +21,7 @@ class App extends Component {
     super();
 
     this.state = {
-      user: null,
+      user: true, // set to true to disable auth login
       notes: testNotes,
       newNote: {
         title: '',
