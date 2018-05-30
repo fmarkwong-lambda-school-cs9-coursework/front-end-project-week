@@ -12,6 +12,7 @@ import LoginPage from './components/LoginPage';
 import { PropsRoute, PublicRoute, PrivateRoute } from 'react-router-with-props';
 import {CSVLink, CSVDownload} from 'react-csv';
 
+import axios from 'axios';
 import persist from 'react-localstorage-hoc'
 
 import './App.css';
@@ -22,7 +23,7 @@ class App extends Component {
 
     this.state = {
       user: true, // set to true to disable auth login
-      notes: testNotes,
+      notes: [],
       newNote: {
         title: '',
         tags: '',
@@ -34,6 +35,14 @@ class App extends Component {
         content: ''
       }
     }
+  }
+
+  componentDidMount() {
+    axios.get(`${process.env.REACT_APP_API}/api/notes`)
+      .then(response => {
+        this.setState({ notes: response.data });
+      })
+      .catch(err => console.log(err));
   }
 
   addNewNote = (newNote) => {
@@ -72,7 +81,7 @@ class App extends Component {
       <div className="App">
         <div className="side-nav">
           <br />
-          <h2>Lambda<br />Notes</h2><br />
+          <h2>Back end Lambda<br />Notes</h2><br />
           <Link to="/"><Button className="btn-custom btn-block">View Your Notes</Button></Link>
           <br />
           <Link to="create-note"><Button className="btn-custom btn-block">+ Create New Note</Button></Link>
@@ -82,7 +91,7 @@ class App extends Component {
         <div className="main-view">
           <div className="main-view-inner">
                 <Switch>
-                  <PropsRoute path="/login" component={LoginPage} setUserState={this.setUserState}/>
+                  {/* <PropsRoute path="/login" component={LoginPage} setUserState={this.setUserState}/> */}
                   <PrivateRoute exact path="/" authed={this.state.user} redirectTo="/login" component={NotesList} notes={this.state.notes} updateClickedNote={this.updateClickedNote} />} />
                   <PrivateRoute path="/notes-view" authed={this.state.user} redirectTo="/login" component={ViewNote} clickedNote={this.state.clickedNote} deleteNote={this.deleteNote} />} />
                   <PrivateRoute path="/create-note" authed={this.state.user} redirectTo="/login" component={CreateNote} addNewNote={this.addNewNote} />} />
@@ -96,4 +105,4 @@ class App extends Component {
   }
 }
 
-export default persist(App);
+export default App;
