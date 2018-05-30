@@ -8,7 +8,7 @@ import CreateNote from './components/createNote';
 import ViewNote from './components/viewNote';
 import EditNote from './components/editNote';
 import { testNotes } from './tests/testData';
-import LoginPage from './components/LoginPage';
+// import LoginPage from './components/LoginPage';
 import { PropsRoute, PublicRoute, PrivateRoute } from 'react-router-with-props';
 import {CSVLink, CSVDownload} from 'react-csv';
 
