@@ -45,15 +45,17 @@ class App extends Component {
       .catch(err => console.log(err));
   }
 
-  addNewNote = (newNote) => {
-    newNote.id = Number(this.state.notes[this.state.notes.length - 1].id) + 1;
-    this.setState({ notes: [...this.state.notes, newNote]});
+  addNewNote = async newNoteData => {
+    const response =  await axios.post(`${process.env.REACT_APP_API}/api/notes`, newNoteData)
+    this.setState({ notes: [...this.state.notes, response.data]});
   }
 
-  updateEditedNote = (updatedNoteData) => {
+  updateEditedNote = async updatedNoteData => {
+    const response =  await axios.put(`${process.env.REACT_APP_API}/api/notes/${updatedNoteData._id}`, updatedNoteData)
+
     const updatedNotes = this.state.notes.map(note => {
-      if (note.id === this.state.clickedNote.id) {
-        return {...updatedNoteData, id: note.id};
+      if (note._id === this.state.clickedNote._id) {
+        return {...updatedNoteData, _id: note._id};
       } else {
         return note;
       } 
@@ -62,8 +64,9 @@ class App extends Component {
     this.setState({ notes: updatedNotes });
   }
 
-  deleteNote = () => {
-    const updatedNotes = this.state.notes.filter(note => note.id !== this.state.clickedNote.id);
+  deleteNote = async () => {
+    const response =  await axios.delete(`${process.env.REACT_APP_API}/api/notes/${this.state.clickedNote._id}`);
+    const updatedNotes = this.state.notes.filter(note => note._id !== this.state.clickedNote._id);
     this.setState({ notes: updatedNotes });
   }
 
@@ -81,7 +84,7 @@ class App extends Component {
       <div className="App">
         <div className="side-nav">
           <br />
-          <h2>Back end Lambda<br />Notes</h2><br />
+          <h2>Backend Lambda<br />Notes</h2><br />
           <Link to="/"><Button className="btn-custom btn-block">View Your Notes</Button></Link>
           <br />
           <Link to="create-note"><Button className="btn-custom btn-block">+ Create New Note</Button></Link>
