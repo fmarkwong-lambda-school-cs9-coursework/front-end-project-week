@@ -51,15 +51,8 @@ class App extends Component {
   }
 
   updateEditedNote = async updatedNoteData => {
-    const response =  await axios.put(`${process.env.REACT_APP_API}/api/notes/${updatedNoteData._id}`, updatedNoteData)
-
-    const updatedNotes = this.state.notes.map(note => {
-      if (note._id === this.state.clickedNote._id) {
-        return response.data;
-      } else {
-        return note;
-      } 
-    });
+    const response =  await axios.put(`${process.env.REACT_APP_API}/api/notes/${updatedNoteData._id}`, updatedNoteData);
+    const updatedNotes = this.state.notes.map(note => note._id === this.state.clickedNote._id ? response.data : note); 
 
     this.setState({ notes: updatedNotes });
   }
