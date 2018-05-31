@@ -55,7 +55,7 @@ class App extends Component {
 
     const updatedNotes = this.state.notes.map(note => {
       if (note._id === this.state.clickedNote._id) {
-        return {...updatedNoteData, _id: note._id};
+        return response.data;
       } else {
         return note;
       } 
