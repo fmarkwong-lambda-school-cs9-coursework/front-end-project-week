@@ -82,7 +82,10 @@ export default class NotesList extends Component {
     return (
       <div>
         <br /><br />
-        <h3>Your Notes:</h3><br />
+        <h3>Your Notes:</h3>
+        Sentiment score range from -1 to 1 
+        <br />
+        <br />
         <Input className="search-bar" onChange={this.handleSearchStringChange} placeholder="Search Notes" /><br />
         <div className="dropdown">
           <button className="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -22,7 +22,7 @@ class Note extends Component {
 
   render() {
     return (
-        <Card className="hvr-curl-top-right hvr-rotate mr-4" onClick={this.handleClickNote}>
+        <Card style={{ "background-color": this.props.note.color }} className="hvr-curl-top-right hvr-rotate mr-4" onClick={this.handleClickNote}>
           <CardBody>
             <CardTitle>{this.props.note.title}</CardTitle>
             {
