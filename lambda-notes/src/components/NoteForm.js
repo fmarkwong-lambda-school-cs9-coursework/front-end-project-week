@@ -4,6 +4,7 @@ import { Input, Row, Col, Button, Label } from 'reactstrap';
 class NoteForm extends Component {
 
   render() {
+    const title = this.props.sentimentActivated ? this.props.sentimentTitle : this.props.title;
     return (
       <div>
         <div className="container note-form">
@@ -12,7 +13,7 @@ class NoteForm extends Component {
                 <br /><br />
                 <h3>{`${this.props.formHeading}:`}</h3><br />
                 <Label>Title</Label>
-                <Input onChange={this.props.handleInputChange} type="text" name="title" value={this.props.title} placeholder="Note Title" />
+                <Input onChange={this.props.handleInputChange} type="text" name="title" value={title} placeholder="Note Title" />
               </Col>
             </Row>
             <Row>

@@ -17,6 +17,8 @@ import {CSVLink, CSVDownload} from 'react-csv';
 import axios from 'axios';
 import persist from 'react-localstorage-hoc'
 
+import ToggleButton from 'react-toggle-button'
+
 import './App.css';
 import './Auth.css';
 
@@ -26,15 +28,18 @@ class App extends Component {
     super();
 
     this.state = {
-      isLoggedIn: localStorage.token, // set to true to disable auth login
+      isLoggedIn: false, // set to true to disable auth login
+      sentimentActivated: false,
       notes: [],
       newNote: {
         title: '',
+        sentimentTitle: '',
         tags: '',
         content: ''
       },
       clickedNote: {
         title: '',
+        sentimentTitle: '',
         tags: '',
         content: ''
       }
@@ -89,6 +94,13 @@ class App extends Component {
     this.setState({ isLoggedIn: updatedUserState });
   };
 
+  activateSentiment = boolVal => {
+    this.setState({ sentimentActivated: boolVal });
+  };
+
+  toggleSwitch = (value) => {
+    this.setState({ sentimentActivated: !value});
+  };
   render() {
     return (
       <Router>
@@ -101,16 +113,18 @@ class App extends Component {
           <Link to="create-note"><Button className="btn-custom btn-block">+ Create New Note</Button></Link>
           <br />
           <Button className="btn-custom btn-block"><CSVLink className="csv" data={this.state.notes} >Export Data</CSVLink></Button>
+          <br />
+          <ToggleButton onToggle={this.toggleSwitch} value={this.state.sentimentActivated || false}/>
         </div>
         <div className="main-view">
           <div className="main-view-inner">
                 <Switch>
                   <PropsRoute path="/login" component={Login} setIsLoggedIn={this.setIsLoggedIn}/>
                   <PublicRoute path="/register" component={Register} setIsLoggedIn={this.setIsLoggedIn} redirectTo="/login" />
-                  <PrivateRoute exact path="/" authed={this.state.isLoggedIn} redirectTo="/login" component={NotesList} notes={this.state.notes} updateClickedNote={this.updateClickedNote} />} />
+                  <PrivateRoute exact path="/" authed={this.state.isLoggedIn} redirectTo="/login" component={NotesList} sentimentActivated={this.state.sentimentActivated} notes={this.state.notes} updateClickedNote={this.updateClickedNote} />} />
                   <PrivateRoute path="/notes-view" authed={this.state.isLoggedIn} redirectTo="/login" component={ViewNote} clickedNote={this.state.clickedNote} deleteNote={this.deleteNote} />} />
                   <PrivateRoute path="/create-note" authed={this.state.isLoggedIn} redirectTo="/login" component={CreateNote} addNewNote={this.addNewNote} />} />
-                  <PrivateRoute path="/edit-note"  authed={this.state.isLoggedIn} redirectTo="/login" component={EditNote} clickedNote={this.state.clickedNote} updateEditedNote={this.updateEditedNote} />} />
+                  <PrivateRoute path="/edit-note" sentimentActivated={this.state.sentimentActivated}  authed={this.state.isLoggedIn} redirectTo="/login" component={EditNote} clickedNote={this.state.clickedNote} updateEditedNote={this.updateEditedNote} />} />
                 </Switch>
           </div>
         </div>

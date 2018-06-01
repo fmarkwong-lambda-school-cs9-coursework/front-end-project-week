@@ -19,7 +19,7 @@ export default class Login extends Component {
     e.preventDefault();
     const response = await axios.post(`${process.env.REACT_APP_API}/login`, this.state)
     localStorage.token = response.data.token; 
-    // this.props.setIsLoggedIn(true);
+    this.props.setIsLoggedIn(true);
     this.props.history.push('/');
   }
 

@@ -21,10 +21,14 @@ class Note extends Component {
   }
 
   render() {
+    const defaultColor = "#f3e87a"; 
+    const color = this.props.sentimentActivated ? this.props.note.color : defaultColor;
+    const title = this.props.sentimentActivated ? this.props.note.sentimentTitle : this.props.note.title;
+
     return (
-        <Card style={{ "background-color": this.props.note.color }} className="hvr-curl-top-right hvr-rotate mr-4" onClick={this.handleClickNote}>
+        <Card style={{ "backgroundColor": color }} className="hvr-curl-top-right hvr-rotate mr-4" onClick={this.handleClickNote}>
           <CardBody>
-            <CardTitle>{this.props.note.title}</CardTitle>
+            <CardTitle>{title}</CardTitle>
             {
               this.props.note.tags.split(' ').map(tag => {
                 return <span key={tag} className="mr-1 badge badge-pill badge-primary">{tag}</span>;

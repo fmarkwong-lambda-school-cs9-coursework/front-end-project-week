@@ -9,6 +9,7 @@ class UpdateNote extends Component {
 
     this.state = {
       title: '',
+      sentimentTitle: '',
       tags: '',
       content: ''
     }
@@ -34,7 +35,7 @@ class UpdateNote extends Component {
   }
 
   render() {
-    return <NoteForm {...this.formAttributes} {...this.state} />;
+    return <NoteForm {...this.formAttributes} {...this.state} sentimentActivated={this.state.sentimentActivated} />;
   }
 }
 

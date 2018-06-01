@@ -83,7 +83,7 @@ export default class NotesList extends Component {
       <div>
         <br /><br />
         <h3>Your Notes:</h3>
-        Sentiment score range from -1 to 1 
+        { this.props.sentimentActivated ? 'Sentiment Analysis score range from -1 to 1' : '' } 
         <br />
         <br />
         <Input className="search-bar" onChange={this.handleSearchStringChange} placeholder="Search Notes" /><br />
@@ -103,7 +103,7 @@ export default class NotesList extends Component {
         { 
           this.notesToDisplay().map((note, i) => { 
             return ( 
-              <Note key={i} note={note} updateClickedNote={this.props.updateClickedNote} />
+              <Note key={i} sentimentActivated={this.props.sentimentActivated} note={note} updateClickedNote={this.props.updateClickedNote} />
             );
           })
         }
