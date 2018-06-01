@@ -9,6 +9,8 @@ import ViewNote from './components/viewNote';
 import EditNote from './components/editNote';
 import { testNotes } from './tests/testData';
 // import LoginPage from './components/LoginPage';
+import Register from './components/register';
+import Login from './components/login';
 import { PropsRoute, PublicRoute, PrivateRoute } from 'react-router-with-props';
 import {CSVLink, CSVDownload} from 'react-csv';
 
@@ -16,13 +18,15 @@ import axios from 'axios';
 import persist from 'react-localstorage-hoc'
 
 import './App.css';
+import './Auth.css';
+
 
 class App extends Component {
   constructor() {
     super();
 
     this.state = {
-      user: true, // set to true to disable auth login
+      isLoggedIn: localStorage.token, // set to true to disable auth login
       notes: [],
       newNote: {
         title: '',
@@ -37,8 +41,22 @@ class App extends Component {
     }
   }
 
+  // componentDidMount() {
+  //   axios.get(`${process.env.REACT_APP_API}/api/notes`)
+  //     .then(response => {
+  //       this.setState({ notes: response.data });
+  //     })
+  //     .catch(err => console.log(err));
+  // }
+
   componentDidMount() {
-    axios.get(`${process.env.REACT_APP_API}/api/notes`)
+    const requestOptions = {
+      headers: {
+        Authorization: localStorage.token,
+      },
+    };
+
+    axios.get(`${process.env.REACT_APP_API}/api/notes`, requestOptions)
       .then(response => {
         this.setState({ notes: response.data });
       })
@@ -67,8 +85,8 @@ class App extends Component {
     this.setState({ clickedNote: clickedNote });
   }
 
-  setUserState = updatedUserState => {
-    this.setState({ user: updatedUserState });
+  setIsLoggedIn = updatedUserState => {
+    this.setState({ isLoggedIn: updatedUserState });
   };
 
   render() {
@@ -87,11 +105,12 @@ class App extends Component {
         <div className="main-view">
           <div className="main-view-inner">
                 <Switch>
-                  {/* <PropsRoute path="/login" component={LoginPage} setUserState={this.setUserState}/> */}
-                  <PrivateRoute exact path="/" authed={this.state.user} redirectTo="/login" component={NotesList} notes={this.state.notes} updateClickedNote={this.updateClickedNote} />} />
-                  <PrivateRoute path="/notes-view" authed={this.state.user} redirectTo="/login" component={ViewNote} clickedNote={this.state.clickedNote} deleteNote={this.deleteNote} />} />
-                  <PrivateRoute path="/create-note" authed={this.state.user} redirectTo="/login" component={CreateNote} addNewNote={this.addNewNote} />} />
-                  <PrivateRoute path="/edit-note"  authed={this.state.user} redirectTo="/login" component={EditNote} clickedNote={this.state.clickedNote} updateEditedNote={this.updateEditedNote} />} />
+                  <PropsRoute path="/login" component={Login} setIsLoggedIn={this.setIsLoggedIn}/>
+                  <PublicRoute path="/register" component={Register} setIsLoggedIn={this.setIsLoggedIn} redirectTo="/login" />
+                  <PrivateRoute exact path="/" authed={this.state.isLoggedIn} redirectTo="/login" component={NotesList} notes={this.state.notes} updateClickedNote={this.updateClickedNote} />} />
+                  <PrivateRoute path="/notes-view" authed={this.state.isLoggedIn} redirectTo="/login" component={ViewNote} clickedNote={this.state.clickedNote} deleteNote={this.deleteNote} />} />
+                  <PrivateRoute path="/create-note" authed={this.state.isLoggedIn} redirectTo="/login" component={CreateNote} addNewNote={this.addNewNote} />} />
+                  <PrivateRoute path="/edit-note"  authed={this.state.isLoggedIn} redirectTo="/login" component={EditNote} clickedNote={this.state.clickedNote} updateEditedNote={this.updateEditedNote} />} />
                 </Switch>
           </div>
         </div>
