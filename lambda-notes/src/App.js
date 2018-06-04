@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Switch, Link } from "react-router-dom";
 
-import { Button } from 'reactstrap';
 
 import NotesList from './components/notesList';
 import CreateNote from './components/createNote';
@@ -11,24 +10,22 @@ import { testNotes } from './tests/testData';
 // import LoginPage from './components/LoginPage';
 import Register from './components/register';
 import Login from './components/login';
+import SideNav from './components/sideNav.js';
 import { PropsRoute, PublicRoute, PrivateRoute } from 'react-router-with-props';
-import {CSVLink, CSVDownload} from 'react-csv';
 
 import axios from 'axios';
 import persist from 'react-localstorage-hoc'
 
-import ToggleButton from 'react-toggle-button'
 
 import './App.css';
 import './Auth.css';
-
 
 class App extends Component {
   constructor() {
     super();
 
     this.state = {
-      isLoggedIn: false, // set to true to disable auth login
+      isLoggedIn: localStorage.notesToken, // set to true to disable auth login
       sentimentActivated: false,
       notes: [],
       newNote: {
@@ -46,42 +43,35 @@ class App extends Component {
     }
   }
 
-  // componentDidMount() {
-  //   axios.get(`${process.env.REACT_APP_API}/api/notes`)
-  //     .then(response => {
-  //       this.setState({ notes: response.data });
-  //     })
-  //     .catch(err => console.log(err));
-  // }
+  loadNotes = async () => {
+    this.axios = axios.create({
+      baseURL: `${process.env.REACT_APP_API}/api/notes`,
+      headers: { Authorization: `bearer ${localStorage.notesToken}` }
+    });
+    const response = await this.axios.get();
+    this.setState({ notes: response.data });
+  }
 
-  componentDidMount() {
-    const requestOptions = {
-      headers: {
-        Authorization: localStorage.token,
-      },
-    };
-
-    axios.get(`${process.env.REACT_APP_API}/api/notes`, requestOptions)
-      .then(response => {
-        this.setState({ notes: response.data });
-      })
-      .catch(err => console.log(err));
+  async componentDidMount() {
+    if (localStorage.notesToken) {
+      await this.loadNotes();
+    }
   }
 
   addNewNote = async newNoteData => {
-    const response =  await axios.post(`${process.env.REACT_APP_API}/api/notes`, newNoteData)
+    const response =  await this.axios.post('', newNoteData);
     this.setState({ notes: [...this.state.notes, response.data]});
   }
 
   updateEditedNote = async updatedNoteData => {
-    const response =  await axios.put(`${process.env.REACT_APP_API}/api/notes/${updatedNoteData._id}`, updatedNoteData);
+    const response =  await this.axios.put(`/${updatedNoteData._id}`, updatedNoteData);
     const updatedNotes = this.state.notes.map(note => note._id === this.state.clickedNote._id ? response.data : note); 
 
     this.setState({ notes: updatedNotes });
   }
 
   deleteNote = async () => {
-    const response =  await axios.delete(`${process.env.REACT_APP_API}/api/notes/${this.state.clickedNote._id}`);
+    const response =  await this.axios.delete(`/${this.state.clickedNote._id}`);
     const updatedNotes = this.state.notes.filter(note => note._id !== this.state.clickedNote._id);
     this.setState({ notes: updatedNotes });
   }
@@ -105,21 +95,13 @@ class App extends Component {
     return (
       <Router>
       <div className="App">
-        <div className="side-nav">
-          <br />
-          <h2>Backend Lambda<br />Notes</h2><br />
-          <Link to="/"><Button className="btn-custom btn-block">View Your Notes</Button></Link>
-          <br />
-          <Link to="create-note"><Button className="btn-custom btn-block">+ Create New Note</Button></Link>
-          <br />
-          <Button className="btn-custom btn-block"><CSVLink className="csv" data={this.state.notes} >Export Data</CSVLink></Button>
-          <br />
-          <ToggleButton onToggle={this.toggleSwitch} value={this.state.sentimentActivated || false}/>
-        </div>
+        { localStorage.notesToken ? 
+        <SideNav notes={this.state.notes} sentimentActivated={this.state.sentimentActivated} toggleSwitch={this.toggleSwitch} /> : '' }
+
         <div className="main-view">
           <div className="main-view-inner">
                 <Switch>
-                  <PropsRoute path="/login" component={Login} setIsLoggedIn={this.setIsLoggedIn}/>
+                  <PropsRoute path="/login" component={Login} loadNotes={this.loadNotes} setIsLoggedIn={this.setIsLoggedIn}/>
                   <PublicRoute path="/register" component={Register} setIsLoggedIn={this.setIsLoggedIn} redirectTo="/login" />
                   <PrivateRoute exact path="/" authed={this.state.isLoggedIn} redirectTo="/login" component={NotesList} sentimentActivated={this.state.sentimentActivated} notes={this.state.notes} updateClickedNote={this.updateClickedNote} />} />
                   <PrivateRoute path="/notes-view" authed={this.state.isLoggedIn} redirectTo="/login" component={ViewNote} clickedNote={this.state.clickedNote} deleteNote={this.deleteNote} />} />

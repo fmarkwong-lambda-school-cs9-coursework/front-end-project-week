@@ -18,8 +18,9 @@ export default class Login extends Component {
   submitHandler = async e => {
     e.preventDefault();
     const response = await axios.post(`${process.env.REACT_APP_API}/login`, this.state)
-    localStorage.token = response.data.token; 
+    localStorage.notesToken = response.data.token; 
     this.props.setIsLoggedIn(true);
+    this.props.loadNotes();
     this.props.history.push('/');
   }
 

@@ -18,7 +18,7 @@ export default class Register extends Component {
   submitHandler = async e => {
     e.preventDefault();
     const response = await axios.post(`${process.env.REACT_APP_API}/register`, this.state)
-    localStorage.token = response.data.token; 
+    localStorage.notesToken = response.data.token; 
     // this.props.setIsLoggedIn(true);
     this.props.history.push('/');
   }
