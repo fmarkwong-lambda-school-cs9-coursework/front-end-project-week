@@ -15,6 +15,11 @@ html, body {
   padding: 0 18px;
 }
 
+.side-nav .text {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
 .main-view {
   display: flex;
   width: 100%;

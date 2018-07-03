@@ -78,12 +78,22 @@ export default class NotesList extends Component {
     }
   };
 
+
   render() {
+    const SentimentAnalysisLabel = () => {
+      return (
+        <span>
+          Sentiment Analysis score range from -1 to 1.<br />
+          Note color changes according to sentiment score.
+        </span>
+      );
+    };
+
     return (
       <div>
         <br /><br />
         <h3>Your Notes:</h3>
-        { this.props.sentimentActivated ? 'Sentiment Analysis score range from -1 to 1' : '' } 
+        { this.props.sentimentActivated ? <SentimentAnalysisLabel /> : '' } 
         <br />
         <br />
         <Input className="search-bar" onChange={this.handleSearchStringChange} placeholder="Search Notes" /><br />
