@@ -18,14 +18,16 @@ import persist from 'react-localstorage-hoc'
 
 
 import './App.css';
-import './Auth.css';
+// import './Auth.css';
 
 class App extends Component {
   constructor() {
     super();
 
+    localStorage.notesToken = true;  // set to true to disable auth 
+
     this.state = {
-      isLoggedIn: localStorage.notesToken, // set to true to disable auth login
+      isLoggedIn: localStorage.notesToken, 
       sentimentActivated: false,
       notes: [],
       newNote: {
@@ -46,7 +48,8 @@ class App extends Component {
   loadNotes = async () => {
     this.axios = axios.create({
       baseURL: `${process.env.REACT_APP_API}/api/notes`,
-      headers: { Authorization: `bearer ${localStorage.notesToken}` }
+      // headers: { Authorization: `bearer ${localStorage.notesToken}` }
+      headers: { Authorization: `bearer notoken` }
     });
     const response = await this.axios.get();
     this.setState({ notes: response.data });
